@@ -14,6 +14,7 @@ using Jellyfin.Plugin.Danmu.Scrapers;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.Danmu.Core.Extensions;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Jellyfin.Plugin.Danmu.Controllers
 {
@@ -56,6 +57,11 @@ namespace Jellyfin.Plugin.Danmu.Controllers
         [HttpGet]
         public async Task<DanmuFileInfo> Get(string id)
         {
+            if (Request.Headers["User-Agent"].First().ToLower().Contains("senplayer"))
+            {
+                // WORKAROUND 兼容SenPlayer旧版
+                Response.Redirect($"/api/danmu/{id}/raw");
+            }
             if (string.IsNullOrEmpty(id))
             {
                 return new DanmuFileInfo();
