@@ -14,6 +14,7 @@ using Jellyfin.Plugin.Danmu.Scrapers;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.Danmu.Core.Extensions;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Jellyfin.Plugin.Danmu.Controllers
 {
@@ -74,7 +75,8 @@ namespace Jellyfin.Plugin.Danmu.Controllers
                 return new DanmuFileInfo();
             }
 
-            var domain = Request.Scheme + System.Uri.SchemeDelimiter + Request.Host;
+            var scheme = Request.Headers["X-Forwarded-Proto"].FirstOrDefault(Request.Scheme);
+            var domain = scheme + System.Uri.SchemeDelimiter + Request.Host;
             return new DanmuFileInfo() { Url = string.Format("{0}/api/danmu/{1}/raw", domain, id) };
         }
 
